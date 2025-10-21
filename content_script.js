@@ -26,6 +26,37 @@ const LEADERBOARD_PRIORITY_MAP = LEADERBOARD_DURATION_PRIORITY.reduce((map, key,
   return map;
 }, {});
 
+const DEFAULT_SETTINGS = Object.freeze({
+  showStatus: true,
+  showYaps: true,
+  showLeaderboard: true,
+});
+
+let currentSettings = { ...DEFAULT_SETTINGS };
+let settingsReady = false;
+let settingsPromise = null;
+
+function loadSettings() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(DEFAULT_SETTINGS, (items) => {
+      if (chrome.runtime.lastError) {
+        console.warn("Failed to load settings:", chrome.runtime.lastError);
+      }
+      currentSettings = { ...DEFAULT_SETTINGS, ...items };
+      settingsReady = true;
+      resolve(currentSettings);
+    });
+  });
+}
+
+async function getSettings() {
+  if (settingsReady) return currentSettings;
+  if (!settingsPromise) settingsPromise = loadSettings();
+  return settingsPromise;
+}
+
+settingsPromise = loadSettings();
+
 function createBadge(label, value, variant = "primary") {
   const badge = document.createElement("span");
   badge.className = `gomtu-badge gomtu-badge--${variant}`;
@@ -132,6 +163,25 @@ function getDurationPriority(durationRaw) {
   return LEADERBOARD_DURATION_PRIORITY.length;
 }
 
+if (chrome?.storage?.onChanged) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "local") return;
+    let relevant = false;
+    Object.keys(DEFAULT_SETTINGS).forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(changes, key)) {
+        currentSettings[key] =
+          changes[key].newValue === undefined ? DEFAULT_SETTINGS[key] : changes[key].newValue;
+        relevant = true;
+      }
+    });
+    if (relevant) {
+      settingsReady = true;
+      settingsPromise = Promise.resolve(currentSettings);
+      processTweets();
+    }
+  });
+}
+
 async function getScore(username) {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage({ type: "GET_SCORE", username }, (resp) => {
@@ -148,7 +198,7 @@ async function insertBadge(el, username) {
   const parent = nameBlock.parentElement;
   if (!parent) return;
 
-  const data = await getScore(username);
+  const [settings, data] = await Promise.all([getSettings(), getScore(username)]);
   if (!data) return;
 
   let lastRow = nameBlock;
@@ -156,7 +206,7 @@ async function insertBadge(el, username) {
   const statusData = data.status;
   const existingStatusRow = parent.querySelector(".gomtu-badge-row--status");
 
-  if (statusData) {
+  if (settings.showStatus && statusData) {
     const statusRow = ensureBadgeRow(parent, "gomtu-badge-row gomtu-badge-row--status");
     placeAfter(parent, statusRow, lastRow);
     statusRow.textContent = "";
@@ -181,7 +231,7 @@ async function insertBadge(el, username) {
   const existingYapsRow = parent.querySelector(".gomtu-badge-row--yaps");
   let yapsRow = null;
 
-  if (yapsData) {
+  if (settings.showYaps && yapsData) {
     yapsRow = ensureBadgeRow(parent, "gomtu-badge-row gomtu-badge-row--yaps");
     placeAfter(parent, yapsRow, lastRow);
     yapsRow.textContent = "";
@@ -207,7 +257,7 @@ async function insertBadge(el, username) {
   const leaderboardEntries = Array.isArray(data.leaderboard) ? data.leaderboard : [];
   const existingLeaderboardRow = parent.querySelector(".gomtu-badge-row--leaderboard");
 
-  if (leaderboardEntries.length) {
+  if (settings.showLeaderboard && leaderboardEntries.length) {
     const leaderboardRow = ensureBadgeRow(parent, "gomtu-badge-row gomtu-badge-row--leaderboard");
     const wasExpanded = leaderboardRow.dataset.expanded === "true";
     placeAfter(parent, leaderboardRow, lastRow);
@@ -236,11 +286,11 @@ async function insertBadge(el, username) {
     const sortedEntries = Array.from(bestByTopic.values())
       .map((item) => item.entry)
       .sort((a, b) => {
-      const rankA = Number.isFinite(a.rank) ? a.rank : Number.POSITIVE_INFINITY;
-      const rankB = Number.isFinite(b.rank) ? b.rank : Number.POSITIVE_INFINITY;
-      if (rankA !== rankB) return rankA - rankB;
-      return (b.updatedAt || 0) - (a.updatedAt || 0);
-    });
+        const rankA = Number.isFinite(a.rank) ? a.rank : Number.POSITIVE_INFINITY;
+        const rankB = Number.isFinite(b.rank) ? b.rank : Number.POSITIVE_INFINITY;
+        if (rankA !== rankB) return rankA - rankB;
+        return (b.updatedAt || 0) - (a.updatedAt || 0);
+      });
 
     const total = sortedEntries.length;
     const limit = MAX_LEADERBOARD_VISIBLE;

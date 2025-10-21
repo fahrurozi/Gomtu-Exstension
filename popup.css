@@ -1,0 +1,70 @@
+:root {
+  color-scheme: dark;
+  font-size: 14px;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.popup {
+  width: 280px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.popup__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popup__logo {
+  width: 24px;
+  height: 24px;
+}
+
+.popup__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  gap: 12px;
+}
+
+.settings__label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.settings__switch {
+  width: 18px;
+  height: 18px;
+}
+
+.popup__hint {
+  margin: 0;
+  font-size: 11px;
+  color: rgba(148, 163, 184, 0.8);
+  line-height: 1.4;
+}

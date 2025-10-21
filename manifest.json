@@ -25,5 +25,8 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "action": {}
+  "action": {
+    "default_title": "Gomtu Everywhere Settings",
+    "default_popup": "popup.html"
+  }
 }

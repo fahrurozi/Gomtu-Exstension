@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gomtu Everywhere Settings</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup__header">
+        <img src="icon48.png" alt="" class="popup__logo" />
+        <h1 class="popup__title">Gomtu Everywhere</h1>
+      </header>
+
+      <form id="settings-form" class="settings">
+        <label class="settings__item">
+          <span class="settings__label">Show Smart Followers &amp; Followers</span>
+          <input type="checkbox" name="showStatus" class="settings__switch" />
+        </label>
+
+        <label class="settings__item">
+          <span class="settings__label">Show Yaps Metrics</span>
+          <input type="checkbox" name="showYaps" class="settings__switch" />
+        </label>
+
+        <label class="settings__item">
+          <span class="settings__label">Show Leaderboard Projects</span>
+          <input type="checkbox" name="showLeaderboard" class="settings__switch" />
+        </label>
+      </form>
+
+      <p class="popup__hint">Changes update instantly. Refresh the tab if something looks off.</p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
