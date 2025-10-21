@@ -1,0 +1,127 @@
+.gomtu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: default;
+  transition: 0.2s;
+}
+.gomtu-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.gomtu-badge-row--status {
+  opacity: 0.9;
+}
+.gomtu-badge-row--leaderboard {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+}
+.gomtu-leaderboard-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.gomtu-badge-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  letter-spacing: 0.4px;
+}
+.gomtu-badge-value {
+  font-size: 12px;
+}
+.gomtu-badge-row .gomtu-badge {
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+}
+.gomtu-badge:hover {
+  transform: scale(1.05);
+}
+.gomtu-badge--primary {
+  background: #0b74de;
+}
+.gomtu-badge--primary:hover {
+  background: #095bb0;
+}
+.gomtu-badge--secondary {
+  background: #475569;
+}
+.gomtu-badge--secondary:hover {
+  background: #334155;
+}
+.gomtu-leaderboard-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #111827;
+  color: #e2e8f0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.gomtu-leaderboard-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.35);
+}
+.gomtu-leaderboard-card-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
+.gomtu-leaderboard-card-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.gomtu-leaderboard-card-name {
+  font-size: 12px;
+  font-weight: 600;
+}
+.gomtu-leaderboard-card-detail {
+  font-size: 10px;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.gomtu-leaderboard-card--hidden {
+  display: none;
+}
+.gomtu-leaderboard-toggle {
+  border: none;
+  background: #1e293b;
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.gomtu-leaderboard-toggle:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+.gomtu-leaderboard-toggle:active {
+  transform: translateY(0);
+}
