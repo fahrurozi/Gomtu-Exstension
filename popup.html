@@ -13,6 +13,7 @@
       </header>
 
       <form id="settings-form" class="settings">
+        <h2 class="settings__section-title">Badges</h2>
         <label class="settings__item">
           <span class="settings__label">Show Smart Followers &amp; Followers</span>
           <input type="checkbox" name="showStatus" class="settings__switch" />
@@ -26,6 +27,67 @@
         <label class="settings__item">
           <span class="settings__label">Show Leaderboard Projects</span>
           <input type="checkbox" name="showLeaderboard" class="settings__switch" />
+        </label>
+
+        <h2 class="settings__section-title">Automation</h2>
+        <label class="settings__item">
+          <span class="settings__label">Enable Auto Reply</span>
+          <input type="checkbox" name="autoReplyEnabled" class="settings__switch" />
+        </label>
+
+        <label class="settings__item">
+          <span class="settings__label">Enable Auto Scroll</span>
+          <input type="checkbox" name="autoScrollEnabled" class="settings__switch" />
+        </label>
+
+        <label class="settings__item settings__item--input">
+          <span class="settings__label">Min Smart Followers</span>
+          <input
+            type="number"
+            name="minSmartFollowers"
+            class="settings__input"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            pattern="[0-9]*"
+          />
+        </label>
+
+        <label class="settings__item settings__item--input">
+          <span class="settings__label">Min Total Yaps</span>
+          <input
+            type="number"
+            name="minTotalYaps"
+            class="settings__input"
+            min="0"
+            step="1"
+            inputmode="numeric"
+            pattern="[0-9]*"
+          />
+        </label>
+
+        <label class="settings__item settings__item--input">
+          <span class="settings__label">Auto Scroll Delay (ms)</span>
+          <input
+            type="number"
+            name="autoScrollDelayMs"
+            class="settings__input"
+            min="500"
+            max="60000"
+            step="100"
+            inputmode="numeric"
+            pattern="[0-9]*"
+          />
+        </label>
+
+        <label class="settings__item settings__item--input">
+          <span class="settings__label">Leaderboard Projects Filter</span>
+          <input
+            type="text"
+            name="leaderboardProjectFilter"
+            class="settings__input settings__input--wide"
+            placeholder="e.g. APE, PEPE"
+          />
         </label>
       </form>
 

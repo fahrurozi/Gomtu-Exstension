@@ -41,6 +41,15 @@ body {
   gap: 12px;
 }
 
+.settings__section-title {
+  margin: 8px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(148, 163, 184, 0.85);
+}
+
 .settings__item {
   display: flex;
   justify-content: space-between;
@@ -55,6 +64,33 @@ body {
 .settings__label {
   font-size: 13px;
   font-weight: 500;
+}
+
+.settings__item--input {
+  align-items: center;
+}
+
+.settings__item--input .settings__label {
+  flex: 1;
+}
+
+.settings__input {
+  width: 90px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+  color: inherit;
+  font-size: 13px;
+}
+
+.settings__input:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 1px;
+}
+
+.settings__input--wide {
+  width: 160px;
 }
 
 .settings__switch {
