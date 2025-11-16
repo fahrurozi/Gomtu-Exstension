@@ -1,5 +1,6 @@
 const CACHE_TTL = 1000 * 60 * 5; // 5 menit
 const cache = new Map();
+const LEADERBOARD_CATALOG_CACHE_KEY = "leaderboardCatalog";
 
 async function fetchJson(url) {
   const res = await fetch(url, { method: "GET", mode: "cors" });
@@ -23,8 +24,36 @@ async function fetchKaitoLeaderboardCatalog() {
   return fetchJson("https://gomtu.xyz/api/kaito/leaderboard");
 }
 
+async function getLeaderboardCatalog(forceRefresh = false) {
+  const cacheEntry = cache.get(LEADERBOARD_CATALOG_CACHE_KEY);
+  const now = Date.now();
+  if (!forceRefresh && cacheEntry && now - cacheEntry.t < CACHE_TTL) {
+    return cacheEntry.data;
+  }
+
+  const result = await fetchKaitoLeaderboardCatalog();
+  const items = Array.isArray(result?.data) ? result.data : [];
+  cache.set(LEADERBOARD_CATALOG_CACHE_KEY, { data: items, t: now });
+  return items;
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg?.type === "GET_SCORE" && msg.username) {
+  if (!msg?.type) return;
+
+  if (msg.type === "FETCH_LEADERBOARD_CATALOG") {
+    (async () => {
+      try {
+        const catalog = await getLeaderboardCatalog(Boolean(msg.forceRefresh));
+        sendResponse({ ok: true, data: catalog });
+      } catch (error) {
+        console.error("Failed to fetch leaderboard catalog:", error);
+        sendResponse({ ok: false, error: error.message });
+      }
+    })();
+    return true;
+  }
+
+  if (msg.type === "GET_SCORE" && msg.username) {
     (async () => {
       const key = msg.username.toLowerCase();
       const now = Date.now();

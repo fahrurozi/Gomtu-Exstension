@@ -12,87 +12,204 @@
         <h1 class="popup__title">Gomtu Everywhere</h1>
       </header>
 
-      <form id="settings-form" class="settings">
-        <h2 class="settings__section-title">Badges</h2>
-        <label class="settings__item">
-          <span class="settings__label">Show Smart Followers &amp; Followers</span>
-          <input type="checkbox" name="showStatus" class="settings__switch" />
-        </label>
+      <nav class="tabs" role="tablist" aria-label="Navigasi popup">
+        <button
+          id="tab-button-projects"
+          class="tabs__button tabs__button--active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="tab-projects"
+          data-tab-target="projects"
+        >
+          Project Yapping
+        </button>
+        <button
+          id="tab-button-settings"
+          class="tabs__button"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tab-settings"
+          data-tab-target="settings"
+        >
+          Pengaturan
+        </button>
+      </nav>
 
-        <label class="settings__item">
-          <span class="settings__label">Show Yaps Metrics</span>
-          <input type="checkbox" name="showYaps" class="settings__switch" />
-        </label>
+      <section
+        id="tab-projects"
+        class="tab-panel tab-panel--active"
+        role="tabpanel"
+        aria-labelledby="tab-button-projects"
+        data-tab-panel="projects"
+      >
+        <div class="project-card">
+          <div class="project-card__intro">
+            <div>
+              <h2 class="yapping__title">Project Yapping</h2>
+              <p class="yapping__subtitle">Catat target dan centang checklist hariannya.</p>
+            </div>
+            <button type="button" id="open-project-dialog" class="yapping__primary-action">Tambah Project</button>
+          </div>
+          <div id="project-yapping-list" class="yapping-list" aria-live="polite"></div>
+        </div>
+      </section>
 
-        <label class="settings__item">
-          <span class="settings__label">Show Leaderboard Projects</span>
-          <input type="checkbox" name="showLeaderboard" class="settings__switch" />
-        </label>
+      <section
+        id="tab-settings"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-button-settings"
+        aria-hidden="true"
+        data-tab-panel="settings"
+      >
+        <form id="settings-form" class="settings">
+          <h2 class="settings__section-title">Badges</h2>
+          <label class="settings__item">
+            <span class="settings__label">Show Smart Followers &amp; Followers</span>
+            <input type="checkbox" name="showStatus" class="settings__switch" />
+          </label>
 
-        <h2 class="settings__section-title">Automation</h2>
-        <label class="settings__item">
-          <span class="settings__label">Enable Auto Reply</span>
-          <input type="checkbox" name="autoReplyEnabled" class="settings__switch" />
-        </label>
+          <label class="settings__item">
+            <span class="settings__label">Show Yaps Metrics</span>
+            <input type="checkbox" name="showYaps" class="settings__switch" />
+          </label>
 
-        <label class="settings__item">
-          <span class="settings__label">Enable Auto Scroll</span>
-          <input type="checkbox" name="autoScrollEnabled" class="settings__switch" />
-        </label>
+          <label class="settings__item">
+            <span class="settings__label">Show Leaderboard Projects</span>
+            <input type="checkbox" name="showLeaderboard" class="settings__switch" />
+          </label>
 
-        <label class="settings__item settings__item--input">
-          <span class="settings__label">Min Smart Followers</span>
-          <input
-            type="number"
-            name="minSmartFollowers"
-            class="settings__input"
-            min="0"
-            step="1"
-            inputmode="numeric"
-            pattern="[0-9]*"
-          />
-        </label>
+          <h2 class="settings__section-title">Automation</h2>
+          <label class="settings__item">
+            <span class="settings__label">Enable Auto Reply</span>
+            <input type="checkbox" name="autoReplyEnabled" class="settings__switch" />
+          </label>
 
-        <label class="settings__item settings__item--input">
-          <span class="settings__label">Min Total Yaps</span>
-          <input
-            type="number"
-            name="minTotalYaps"
-            class="settings__input"
-            min="0"
-            step="1"
-            inputmode="numeric"
-            pattern="[0-9]*"
-          />
-        </label>
+          <label class="settings__item">
+            <span class="settings__label">Enable Auto Scroll</span>
+            <input type="checkbox" name="autoScrollEnabled" class="settings__switch" />
+          </label>
 
-        <label class="settings__item settings__item--input">
-          <span class="settings__label">Auto Scroll Delay (ms)</span>
-          <input
-            type="number"
-            name="autoScrollDelayMs"
-            class="settings__input"
-            min="500"
-            max="60000"
-            step="100"
-            inputmode="numeric"
-            pattern="[0-9]*"
-          />
-        </label>
+          <label class="settings__item settings__item--input">
+            <span class="settings__label">Min Smart Followers</span>
+            <input
+              type="number"
+              name="minSmartFollowers"
+              class="settings__input"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              pattern="[0-9]*"
+            />
+          </label>
 
-        <label class="settings__item settings__item--input">
-          <span class="settings__label">Leaderboard Projects Filter</span>
-          <input
-            type="text"
-            name="leaderboardProjectFilter"
-            class="settings__input settings__input--wide"
-            placeholder="e.g. APE, PEPE"
-          />
-        </label>
-      </form>
+          <label class="settings__item settings__item--input">
+            <span class="settings__label">Min Total Yaps</span>
+            <input
+              type="number"
+              name="minTotalYaps"
+              class="settings__input"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              pattern="[0-9]*"
+            />
+          </label>
 
-      <p class="popup__hint">Changes update instantly. Refresh the tab if something looks off.</p>
+          <label class="settings__item settings__item--input">
+            <span class="settings__label">Auto Scroll Delay (ms)</span>
+            <input
+              type="number"
+              name="autoScrollDelayMs"
+              class="settings__input"
+              min="500"
+              max="60000"
+              step="100"
+              inputmode="numeric"
+              pattern="[0-9]*"
+            />
+          </label>
+
+          <label class="settings__item settings__item--input">
+            <span class="settings__label">Leaderboard Projects Filter</span>
+            <input
+              type="text"
+              name="leaderboardProjectFilter"
+              class="settings__input settings__input--wide"
+              placeholder="e.g. APE, PEPE"
+            />
+          </label>
+        </form>
+
+        <p class="popup__hint">Changes update instantly. Refresh the tab if something looks off.</p>
+      </section>
     </main>
+
+    <dialog id="project-dialog" class="project-dialog">
+      <div class="project-dialog__body">
+        <header class="project-dialog__header">
+          <div>
+            <h2 class="project-dialog__title">Tambah Project</h2>
+            <p class="project-dialog__subtitle">Input manual atau pilih dari katalog Kaito.</p>
+          </div>
+          <button type="button" class="project-dialog__close" data-dialog-close aria-label="Tutup dialog">&times;</button>
+        </header>
+
+        <section class="project-dialog__section">
+          <h3 class="project-dialog__section-title">Input Manual</h3>
+          <form id="project-manual-form" class="project-form" autocomplete="off">
+            <input
+              id="project-name-input"
+              name="projectName"
+              type="text"
+              class="project-form__input"
+              placeholder="Nama project *"
+              required
+            />
+            <input
+              id="project-account-input"
+              name="projectAccount"
+              type="text"
+              class="project-form__input"
+              placeholder="Akun utama (@handle atau URL)"
+            />
+            <input
+              id="project-keyword-input"
+              name="projectKeyword"
+              type="text"
+              class="project-form__input"
+              placeholder="Keyword pencarian (opsional)"
+            />
+            <p id="project-form-hint" class="project-form__hint"></p>
+            <div class="project-form__actions">
+              <button type="submit" class="project-form__submit">Simpan Project</button>
+              <button type="button" class="project-form__cancel" data-dialog-close>Batal</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="project-dialog__section">
+          <div class="project-dialog__section-header">
+            <h3 class="project-dialog__section-title">Pilih dari Catalog Kaito</h3>
+            <div class="catalog-controls">
+              <input
+                type="search"
+                id="catalog-search"
+                class="catalog-controls__search"
+                placeholder="Cari nama / ticker"
+                autocomplete="off"
+              />
+              <button type="button" id="refresh-catalog" class="catalog-controls__refresh">Refresh</button>
+            </div>
+          </div>
+          <div id="catalog-status" class="catalog-status" aria-live="polite"></div>
+          <div id="catalog-list" class="catalog-list"></div>
+        </section>
+      </div>
+    </dialog>
+
     <script src="popup.js"></script>
   </body>
 </html>

@@ -36,6 +36,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   minSmartFollowers: 0,
   minTotalYaps: 0,
   leaderboardProjectFilter: "",
+  projectYappingList: [],
 });
 
 let currentSettings = { ...DEFAULT_SETTINGS };
@@ -131,6 +132,8 @@ function resolveSettingValue(key, rawValue) {
       if (typeof rawValue !== "string") return "";
       return rawValue.trim();
     }
+    case "projectYappingList":
+      return Array.isArray(rawValue) ? rawValue : [];
     default:
       return rawValue;
   }
