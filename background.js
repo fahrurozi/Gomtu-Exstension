@@ -298,17 +298,49 @@ function getCookiesByDomain(domains) {
 }
 
 function buildGrokPrompt(project) {
+  if (!project || typeof project !== "object") return "";
+  const name = typeof project.name === "string" ? project.name.trim() : "";
+  if (!name) return "";
+  const account = typeof project.account === "string" ? project.account.trim() : "";
+  const accountUrl = account;
+  const keyword = typeof project.keyword === "string" ? project.keyword.trim() : "";
+
   const lines = [
-    `You are the social media manager for project ${project.name}.`,
-    "Write exactly one tweet in English (max 280 characters) with a confident, optimistic, and natural human tone — no filler and not ‘AI-sounding’.",
-    "Make it relevant to the latest crypto/CT context: do a quick scan of recent updates/trends/community sentiment or narrative shifts before writing.",
-    "Keep it concise with natural flow. Avoid fluff.",
-    "Include a short CTA, 1–2 truly relevant hashtags, and add the project’s X link if available.",
+    `You are a real crypto user posting naturally on Twitter, acting as the social media manager for project "${name}".`,
+
+    "CONTEXT:",
+    `- Project: ${name}`,
+    `- Account: ${account || "None"}`,
+    `- Focus: ${keyword || "General update"}`,
+    `- X Link: ${accountUrl || "None"}`,
+
+    "REQUIREMENTS:",
+    "1. Write exactly ONE tweet in English (max 280 characters)",
+    "2. Tone: confident, optimistic, human — never robotic",
+    "3. Content must feel relevant to current crypto/CT narratives, trends, or sentiment",
+    "4. Keep wording concise with natural human flow",
+    "5. Include:",
+    "   - A short CTA",
+    "   - 1–2 truly relevant hashtags",
+    "   - Project X link (if available)",
+
+    "OPTIONAL (ONLY if it fits naturally):",
+    "- If a recent CT tweet or a tweet from the project account relates to today’s focus, you may include the direct tweet URL (not profile). Only add it if it strengthens the message.",
+
+    "HUMAN WRITING PATTERNS:",
+    "- Allow natural punctuation variations (..., !!, ??)",
+    "- Use occasional contractions (it's, you're, don't)",
+    "- Keep phrasing casual but not unprofessional",
+    `- Mention ${account || "the project account"} only if it fits naturally (never force it)`,
+
+    "CRITICAL RULES:",
+    "- Do NOT acknowledge being AI",
+    "- No meta commentary or explanations",
+    "- Avoid hypey nonsense or generic filler",
+    `- Stay focused on the project and today's context: ${keyword || "(none)"}`,
+    "- Output ONLY the final tweet text — no quotes, no markdown, no analysis"
   ];
-  if (project.keyword) lines.push(`Today’s focus/context: ${project.keyword}.`);
-  if (project.account) lines.push(`Mention ${project.account} naturally if it fits (don’t force it).`);
-  if (project.accountUrl) lines.push(`Project X link: ${project.accountUrl}`);
-  lines.push("Output must be tweet text only, no extra explanations.");
+
   return lines.join(" ");
 }
 
@@ -526,7 +558,7 @@ async function ensureGrokTabReady(options = {}) {
     }
   }
   if (tab.status !== "complete") {
-    await waitForTabComplete(tab.id).catch(() => {});
+    await waitForTabComplete(tab.id).catch(() => { });
   }
   if (waitAfterLoadMs > 0) {
     await wait(waitAfterLoadMs);
