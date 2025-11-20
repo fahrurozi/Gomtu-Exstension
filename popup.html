@@ -10,6 +10,20 @@
       <header class="popup__header">
         <img src="icon48.png" alt="" class="popup__logo" />
         <h1 class="popup__title">Gomtu Everywhere</h1>
+        <button
+          type="button"
+          class="popup__settings-btn"
+          aria-label="Buka pengaturan"
+          data-tab-target="settings"
+          title="Pengaturan"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm8.25 2.5c0-.32-.02-.63-.05-.94l1.5-1.17a.5.5 0 0 0 .12-.64l-1.42-2.46a.5.5 0 0 0-.6-.22l-1.77.71a8 8 0 0 0-1.62-.94l-.27-1.87a.5.5 0 0 0-.5-.43h-2.84a.5.5 0 0 0-.5.43l-.27 1.87c-.58.24-1.12.56-1.62.94l-1.77-.71a.5.5 0 0 0-.6.22L2.18 9.25a.5.5 0 0 0 .12.64l1.5 1.17c-.03.31-.05.62-.05.94s.02.63.05.94l-1.5 1.17a.5.5 0 0 0-.12.64l1.42 2.46c.13.22.39.3.6.22l1.77-.71c.5.38 1.04.7 1.62.94l.27 1.87a.5.5 0 0 0 .5.43h2.84a.5.5 0 0 0 .5-.43l.27-1.87c.58-.24 1.12-.56 1.62-.94l1.77.71c.23.09.48 0 .6-.22l1.42-2.46a.5.5 0 0 0-.12-.64l-1.5-1.17c.03-.31.05-.62.05-.94z"
+            />
+          </svg>
+        </button>
       </header>
 
       <nav class="tabs" role="tablist" aria-label="Navigasi popup">
@@ -25,15 +39,15 @@
           Project Yapping
         </button>
         <button
-          id="tab-button-settings"
+          id="tab-button-stats"
           class="tabs__button"
           type="button"
           role="tab"
           aria-selected="false"
-          aria-controls="tab-settings"
-          data-tab-target="settings"
+          aria-controls="tab-stats"
+          data-tab-target="stats"
         >
-          Pengaturan
+          Statistik
         </button>
       </nav>
 
@@ -81,69 +95,51 @@
             <input type="checkbox" name="showLeaderboard" class="settings__switch" />
           </label>
 
-          <h2 class="settings__section-title">Automation</h2>
-          <label class="settings__item">
-            <span class="settings__label">Enable Auto Reply</span>
-            <input type="checkbox" name="autoReplyEnabled" class="settings__switch" />
-          </label>
-
-          <label class="settings__item">
-            <span class="settings__label">Enable Auto Scroll</span>
-            <input type="checkbox" name="autoScrollEnabled" class="settings__switch" />
-          </label>
-
-          <label class="settings__item settings__item--input">
-            <span class="settings__label">Min Smart Followers</span>
-            <input
-              type="number"
-              name="minSmartFollowers"
-              class="settings__input"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              pattern="[0-9]*"
-            />
-          </label>
-
-          <label class="settings__item settings__item--input">
-            <span class="settings__label">Min Total Yaps</span>
-            <input
-              type="number"
-              name="minTotalYaps"
-              class="settings__input"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              pattern="[0-9]*"
-            />
-          </label>
-
-          <label class="settings__item settings__item--input">
-            <span class="settings__label">Auto Scroll Delay (ms)</span>
-            <input
-              type="number"
-              name="autoScrollDelayMs"
-              class="settings__input"
-              min="500"
-              max="60000"
-              step="100"
-              inputmode="numeric"
-              pattern="[0-9]*"
-            />
-          </label>
-
-          <label class="settings__item settings__item--input">
-            <span class="settings__label">Leaderboard Projects Filter</span>
-            <input
-              type="text"
-              name="leaderboardProjectFilter"
-              class="settings__input settings__input--wide"
-              placeholder="e.g. APE, PEPE"
-            />
-          </label>
         </form>
 
         <p class="popup__hint">Changes update instantly. Refresh the tab if something looks off.</p>
+      </section>
+
+      <section
+        id="tab-stats"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-button-stats"
+        aria-hidden="true"
+        data-tab-panel="stats"
+      >
+        <div class="stats">
+          <h2 class="stats__title">Statistik Yapping</h2>
+          <div class="stats__grid">
+            <div class="stats__card">
+              <p class="stats__label">Total Project</p>
+              <p id="stats-total-projects" class="stats__value">0</p>
+            </div>
+            <div class="stats__card">
+              <p class="stats__label">Checklist Hari Ini</p>
+              <p id="stats-checked-today" class="stats__value">0</p>
+            </div>
+            <div class="stats__card">
+              <p class="stats__label">Total Streak</p>
+              <p id="stats-total-streak" class="stats__value">0</p>
+            </div>
+            <div class="stats__card">
+              <p class="stats__label">Streak Terpanjang</p>
+              <p id="stats-longest-streak" class="stats__value">0</p>
+              <p id="stats-longest-project" class="stats__hint"></p>
+            </div>
+          </div>
+
+          <div class="stats__list">
+            <h3 class="stats__subtitle">Top Streak</h3>
+            <ul id="stats-top-streak-list" class="stats__items"></ul>
+          </div>
+
+          <div class="stats__list">
+            <h3 class="stats__subtitle">Perbandingan Streak Project</h3>
+            <div id="stats-bar-chart" class="stats-chart"></div>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -175,6 +171,16 @@
               class="project-form__input"
               placeholder="Akun utama (@handle atau URL)"
             />
+            <div class="project-form__icon-row">
+              <input
+                id="project-icon-input"
+                name="projectIcon"
+                type="text"
+                class="project-form__input project-form__input--icon"
+                placeholder="Icon URL (opsional)"
+              />
+              <button type="button" id="project-icon-fetch" class="project-form__icon-button">Ambil dari Gomtu</button>
+            </div>
             <input
               id="project-keyword-input"
               name="projectKeyword"
@@ -210,6 +216,7 @@
       </div>
     </dialog>
 
+    <script src="popup_grok.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

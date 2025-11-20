@@ -3,8 +3,8 @@
   "name": "Gomtu Everywhere",
   "version": "1.0.0",
   "description": "Tampilkan skor Gomtu di profil Twitter/X seperti Ethos.",
-  "permissions": ["storage", "scripting"],
-  "host_permissions": ["https://gomtu.xyz/*"],
+  "permissions": ["storage", "scripting", "cookies", "proxy", "tabs"],
+  "host_permissions": ["https://gomtu.xyz/*", "https://x.com/*", "https://twitter.com/*", "https://grok.com/*"],
   "background": {
     "service_worker": "background.js"
   },
@@ -19,11 +19,19 @@
       "js": ["content_script.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://grok.com/*", "https://*.grok.com/*"],
+      "js": ["grok_inject.js"],
+      "run_at": "document_idle"
     }
   ],
   "icons": {
     "48": "icon48.png",
     "128": "icon128.png"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
   },
   "action": {
     "default_title": "Gomtu Everywhere Settings",
