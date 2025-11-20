@@ -18,29 +18,29 @@
     if (!name) return "";
     const account = typeof project.account === "string" ? project.account.trim() : "";
     const accountUrl = normalizeAccountUrl(account);
-    const keyword = typeof project.keyword === "string" ? project.keyword.trim() : "";
+  const keyword = typeof project.keyword === "string" ? project.keyword.trim() : "";
 
-    const lines = [
-      `Kamu adalah social media manager untuk project ${name}.`,
-      "Tugasmu: tulis 1 tweet berbahasa Indonesia (maks 280 karakter) dengan tone optimis, percaya diri, dan natural — tidak kaku, tidak seperti AI.",
-      "Tweet harus relevan dengan perkembangan terbaru di crypto/CT. Lakukan mini-riset sebelum menulis: cek update, tren, opini komunitas, atau pergerakan narasi terakhir.",
-      "Gunakan gaya penulisan manusia: ringkas, tidak bertele-tele, dan punya flow alami.",
-      "Sertakan CTA singkat, 1–2 hashtag yang benar-benar relevan, dan cantumkan link X project jika tersedia."
-    ];
+  const lines = [
+    `You are the social media manager for project ${name}.`,
+    "Write exactly one tweet in English (max 280 characters) with a confident, optimistic, and natural human tone — no filler and not ‘AI-sounding’.",
+    "Make it relevant to the latest crypto/CT context: do a quick scan of recent updates/trends/community sentiment or narrative shifts before writing.",
+    "Keep it concise with natural flow. Avoid fluff.",
+    "Include a short CTA, 1–2 truly relevant hashtags, and add the project’s X link if available."
+  ];
 
-    if (keyword) {
-      lines.push(`Fokus atau konteks update hari ini: ${keyword}.`);
-    }
+  if (keyword) {
+    lines.push(`Today’s focus/context: ${keyword}.`);
+  }
 
-    if (account) {
-      lines.push(`Jika cocok, mention akun ${account} secara natural (tidak dipaksakan).`);
-    }
+  if (account) {
+    lines.push(`Mention ${account} naturally if it fits (don’t force it).`);
+  }
 
-    if (accountUrl) {
-      lines.push(`Link X project: ${accountUrl}`);
-    }
+  if (accountUrl) {
+    lines.push(`Project X link: ${accountUrl}`);
+  }
 
-    lines.push("Output wajib berupa teks tweet saja, tanpa penjelasan tambahan.");
+  lines.push("Output must be tweet text only, no extra explanations.");
 
     return lines.join(" ");
   }

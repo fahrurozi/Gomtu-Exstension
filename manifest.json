@@ -3,7 +3,7 @@
   "name": "Gomtu Everywhere",
   "version": "1.0.0",
   "description": "Tampilkan skor Gomtu di profil Twitter/X seperti Ethos.",
-  "permissions": ["storage", "scripting", "cookies", "proxy", "tabs"],
+  "permissions": ["storage", "scripting", "cookies", "proxy", "tabs", "sidePanel"],
   "host_permissions": ["https://gomtu.xyz/*", "https://x.com/*", "https://twitter.com/*", "https://grok.com/*"],
   "background": {
     "service_worker": "background.js"

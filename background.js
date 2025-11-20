@@ -215,6 +215,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
+if (chrome?.sidePanel?.setPanelBehavior) {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((err) => {
+    console.warn("Unable to set side panel behavior:", err);
+  });
+} else {
+  chrome.action.onClicked.addListener(() => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("popup.html") });
+  });
+}
+
 async function requestGrokTweetDraft(project) {
   const sanitizedProject = sanitizeProjectPayload(project);
   await assertXCookies();
@@ -289,15 +299,16 @@ function getCookiesByDomain(domains) {
 
 function buildGrokPrompt(project) {
   const lines = [
-    `Kamu adalah social media manager untuk project ${project.name}.`,
-    "Tulis satu tweet bahasa Indonesia (maks 280 karakter) dengan nada optimis tapi tidak berlebihan.",
-    "Sertakan CTA singkat, 1-2 hashtag relevan, dan cantumkan link X project jika ada.",
-    "Riset singkat kronologi/tweet CT terbaru yang relevan sebelum menulis.",
+    `You are the social media manager for project ${project.name}.`,
+    "Write exactly one tweet in English (max 280 characters) with a confident, optimistic, and natural human tone — no filler and not ‘AI-sounding’.",
+    "Make it relevant to the latest crypto/CT context: do a quick scan of recent updates/trends/community sentiment or narrative shifts before writing.",
+    "Keep it concise with natural flow. Avoid fluff.",
+    "Include a short CTA, 1–2 truly relevant hashtags, and add the project’s X link if available.",
   ];
-  if (project.keyword) lines.push(`Fokus update hari ini: ${project.keyword}.`);
-  if (project.account) lines.push(`Jika perlu mention akun ${project.account}.`);
-  if (project.accountUrl) lines.push(`Link X project: ${project.accountUrl}`);
-  lines.push("Format keluaran hanya teks tweet tanpa penjelasan tambahan.");
+  if (project.keyword) lines.push(`Today’s focus/context: ${project.keyword}.`);
+  if (project.account) lines.push(`Mention ${project.account} naturally if it fits (don’t force it).`);
+  if (project.accountUrl) lines.push(`Project X link: ${project.accountUrl}`);
+  lines.push("Output must be tweet text only, no extra explanations.");
   return lines.join(" ");
 }
 

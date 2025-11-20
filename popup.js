@@ -373,6 +373,13 @@ function saveSetting(key, value) {
 }
 
 function initPopupTabs(defaultTab = POPUP_DEFAULT_TAB) {
+  const sidePanelBtn = document.getElementById("open-sidepanel");
+  if (sidePanelBtn) {
+    sidePanelBtn.addEventListener("click", () => {
+      openSidePanel();
+    });
+  }
+
   const tabButtons = Array.from(document.querySelectorAll("[data-tab-target]"));
   if (!tabButtons.length) return;
 
@@ -415,6 +422,31 @@ function initPopupTabs(defaultTab = POPUP_DEFAULT_TAB) {
   });
 
   activateTab(initialTab);
+}
+
+function openSidePanel() {
+  const panel = chrome?.sidePanel;
+  if (!panel?.open || !panel?.setOptions) {
+    fallbackOpenPopupTab();
+    return;
+  }
+  const url = chrome?.runtime?.getURL ? chrome.runtime.getURL("popup.html") : "popup.html";
+  panel
+    .setOptions({ windowId: chrome.windows.WINDOW_ID_CURRENT, path: url, enabled: true })
+    .then(() => panel.open({ windowId: chrome.windows.WINDOW_ID_CURRENT }))
+    .catch((err) => {
+      console.warn("Failed to open side panel:", err);
+      fallbackOpenPopupTab();
+    });
+}
+
+function fallbackOpenPopupTab() {
+  const url = chrome?.runtime?.getURL ? chrome.runtime.getURL("popup.html") : "popup.html";
+  if (chrome?.tabs?.create) {
+    chrome.tabs.create({ url });
+  } else {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -460,6 +492,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function initProjectYapping(initialProjects) {
   const listContainer = document.getElementById("project-yapping-list");
+  const searchInput = document.getElementById("project-search");
   const openDialogBtn = document.getElementById("open-project-dialog");
   const dialog = document.getElementById("project-dialog");
   const manualForm = document.getElementById("project-manual-form");
@@ -502,9 +535,12 @@ function initProjectYapping(initialProjects) {
   let catalogLoading = false;
   let catalogLoaded = false;
   let catalogLoadingPromise = null;
+  let draggingId = null;
 
   renderProjects();
   updateYappingStats();
+
+  searchInput?.addEventListener("input", () => renderProjects());
 
   openDialogBtn.addEventListener("click", () => {
     openDialog();
@@ -528,6 +564,7 @@ function initProjectYapping(initialProjects) {
   manualForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const entry = sanitizeProjectEntry({
+      id: manualForm.dataset.editingId,
       name: nameInput.value,
       account: accountInput.value,
       iconUrl: iconInput?.value,
@@ -539,13 +576,29 @@ function initProjectYapping(initialProjects) {
       nameInput.focus();
       return;
     }
-    commitProjects([
-      ...projects,
-      {
-        ...entry,
-        lastCheckedDate: null,
-      },
-    ]);
+    const isEdit = Boolean(manualForm.dataset.editingId);
+    if (isEdit) {
+      commitProjects(
+        projects.map((p) =>
+          p.id === entry.id
+            ? {
+                ...p,
+                ...entry,
+                lastCheckedDate: p.lastCheckedDate,
+                streakCount: p.streakCount,
+              }
+            : p,
+        ),
+      );
+    } else {
+      commitProjects([
+        ...projects,
+        {
+          ...entry,
+          lastCheckedDate: null,
+        },
+      ]);
+    }
     closeDialog();
   });
 
@@ -586,6 +639,7 @@ function initProjectYapping(initialProjects) {
   function openDialog() {
     if (!dialog.open) dialog.showModal();
     manualForm.reset();
+    manualForm.dataset.editingId = "";
     setFormHint("");
     nameInput.focus();
     if (iconInput) iconInput.value = "";
@@ -596,7 +650,19 @@ function initProjectYapping(initialProjects) {
   function closeDialog() {
     if (dialog.open) dialog.close();
     manualForm.reset();
+    manualForm.dataset.editingId = "";
     setFormHint("");
+  }
+
+  function openDialogForEdit(project) {
+    if (!project) return;
+    openDialog();
+    manualForm.dataset.editingId = project.id;
+    nameInput.value = project.name || "";
+    accountInput.value = project.account || "";
+    keywordInput.value = project.keyword || "";
+    if (iconInput) iconInput.value = project.iconUrl || "";
+    setFormHint("Edit project lalu Simpan.");
   }
 
   function setFormHint(message = "") {
@@ -668,15 +734,23 @@ function initProjectYapping(initialProjects) {
 
   function renderProjects() {
     listContainer.innerHTML = "";
-    if (!projects.length) {
+    const keyword = (searchInput?.value || "").trim().toLowerCase();
+    const visible = !keyword
+      ? projects
+      : projects.filter((entry) => {
+          const name = (entry?.name || "").toLowerCase();
+          const ticker = (entry?.keyword || "").toLowerCase();
+          return name.includes(keyword) || ticker.includes(keyword);
+        });
+    if (!visible.length) {
       const empty = document.createElement("p");
       empty.className = "yapping__empty";
-      empty.textContent = "Belum ada project. Klik Tambah Project.";
+      empty.textContent = projects.length ? "Tidak ada project yang cocok." : "Belum ada project. Klik Tambah Project.";
       listContainer.appendChild(empty);
       return;
     }
 
-    projects.forEach((project) => {
+    visible.forEach((project) => {
       listContainer.appendChild(createProjectCard(project));
     });
   }
@@ -685,6 +759,30 @@ function initProjectYapping(initialProjects) {
     const item = document.createElement("div");
     item.className = "yapping-project";
     item.dataset.projectId = project.id;
+    item.draggable = true;
+
+    item.addEventListener("dragstart", (e) => {
+      draggingId = project.id;
+      item.classList.add("yapping-project--dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    item.addEventListener("dragend", () => {
+      draggingId = null;
+      item.classList.remove("yapping-project--dragging");
+    });
+
+    item.addEventListener("dragover", (e) => {
+      if (!draggingId || draggingId === project.id) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    });
+
+    item.addEventListener("drop", (e) => {
+      e.preventDefault();
+      if (!draggingId || draggingId === project.id) return;
+      reorderProjects(draggingId, project.id);
+    });
 
     const header = document.createElement("div");
     header.className = "yapping-project__header";
@@ -789,7 +887,15 @@ function initProjectYapping(initialProjects) {
       searchBtn.addEventListener("click", () => openExternalUrl(searchUrl));
     }
 
-    actions.append(accountBtn, searchBtn);
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "yapping-project__action";
+    editBtn.textContent = "Edit";
+    editBtn.addEventListener("click", () => {
+      openDialogForEdit(project);
+    });
+
+    actions.append(accountBtn, searchBtn, editBtn);
 
     const automation = document.createElement("div");
     automation.className = "yapping-project__automation";
@@ -820,6 +926,18 @@ function initProjectYapping(initialProjects) {
 
     item.append(header, checkLabel, actions, automation);
     return item;
+  }
+
+  function reorderProjects(sourceId, targetId) {
+    if (!sourceId || !targetId || sourceId === targetId) return;
+    const current = [...projects];
+    const fromIndex = current.findIndex((p) => p.id === sourceId);
+    const toIndex = current.findIndex((p) => p.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return;
+    const [moved] = current.splice(fromIndex, 1);
+    const insertAt = fromIndex < toIndex ? toIndex : toIndex;
+    current.splice(insertAt, 0, moved);
+    commitProjects(current);
   }
 
   async function ensureCatalogLoaded(force = false) {
